@@ -3,6 +3,11 @@ File: asteroids.py
 Original Author: Br. Burton
 Designed to be completed by others
 This program implements the asteroids game.
+
+our teacher gave us this file and we would call certain parts of it for our other files.
+
+we ended up going over this file and learned how it was all made, but we were just learing python when
+we started this project so after we finished it we were all able to understand this part.
 """
 import arcade
 import random
