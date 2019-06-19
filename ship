@@ -1,0 +1,98 @@
+from flyingobject import FlyingObject
+import math
+import arcade
+
+BULLET_RADIUS = 30
+BULLET_SPEED = 10
+BULLET_LIFE = 60
+
+SHIP_TURN_AMOUNT = 30
+SHIP_THRUST_AMOUNT = 0.25
+SHIP_RADIUS = 30
+
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+
+#the ship can accelerate
+#and shoot bullets
+
+class Ship(FlyingObject):
+    def __init__(self):
+        super().__init__()
+        self.radius = SHIP_RADIUS
+        self.center.x = SCREEN_WIDTH/2
+        self.center.y = SCREEN_HEIGHT/2
+        self.thrust = 0
+        self.img = "images/star-wars-millenium-falcon.png"
+
+    def draw(self):
+        texture = arcade.load_texture(self.img)
+
+        width = texture.width
+        height = texture.height
+        alpha = 1  # For transparency, 1 means not transparent
+
+        x = self.center.x
+        y = self.center.y
+        angle = self.angle
+
+        arcade.draw_texture_rectangle(x, y, 120, 120, texture, angle, alpha)
+
+    def hit(self):
+        return -100
+
+    def spin(self,SHIP_TURN_AMOUNT):
+        self.angle += SHIP_TURN_AMOUNT
+
+    def move(self,SHIP_THRUST_AMOUNT):
+        self.thrust = SHIP_THRUST_AMOUNT
+        self.velocity.dx += math.cos(math.radians(self.angle+90)) * self.thrust
+        self.velocity.dy += math.sin(math.radians(self.angle+90)) * self.thrust
+
+    '''call this to stop the ship quicker
+    def stop(self):
+        self.velocity.dx = 0
+        self.velocity.dy = 0'''
+
+#bullets appear when the space bar is hit, at the point that the ship appears
+#i did not have the bullet inherit the speed of the ship because it makes more sense to me to have its own speed
+#at the spot where it was shot
+
+class Bullets(FlyingObject):
+    def __init__(self):
+        super().__init__()
+        self.velocity.dx = BULLET_SPEED
+        self.velocity.dy = BULLET_SPEED
+        self.radius= BULLET_RADIUS
+        self.life = 0
+
+    def advance(self):
+        super().advance()
+        
+        if self.life < BULLET_LIFE:
+            self.life += 1
+        else:
+            self.alive = False
+
+
+
+    def draw(self):
+        img = "images/laserBlue01.png"
+        texture = arcade.load_texture(img)
+
+        width = texture.width
+        height = texture.height
+        alpha = 1  # For transparency, 1 means not transparent
+
+        x = self.center.x
+        y = self.center.y
+        angle = self.angle
+
+        arcade.draw_texture_rectangle(x, y, width, height, texture, angle+90, alpha)
+
+    def fire(self,angle,x,y):
+        self.angle = angle
+        self.center.x = x
+        self.center.y = y
+        self.velocity.dx = math.cos(math.radians(self.angle+90)) * BULLET_SPEED
+        self.velocity.dy = math.sin(math.radians(self.angle+90)) * BULLET_SPEED
